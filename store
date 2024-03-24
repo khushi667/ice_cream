@@ -1,0 +1,54 @@
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from datetime import datetime
+from django.utils import timezone  # Import Django's timezone module
+from .models import ContactMessage
+
+def contact(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+        password = request.POST.get('password')
+        desc = request.POST.get('desc')
+
+        if name and email and message and password:
+            # Use timezone.now().date() to get today's date
+            today_date = timezone.now().date()
+            ContactMessage.objects.create(name=name, email=email, message=message, password=password, desc=desc, date=today_date)
+            # You might also send an email notification here if desired
+            return redirect('success')  # Redirect to a success page
+            messages.success(request, "Your messange has been sent")
+            
+        else:
+            return HttpResponse("Error: All fields are required.", status=400)
+
+    return render(request, 'contact.html')
+
+def success_view(request):
+    return render(request, 'success.html')  # Render a success page
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  {% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">
+    </button>
+  </div>
+  {% endfor %}
+  {% endif %}
